@@ -14,6 +14,7 @@ data class QuestionInfo(
     @SerializedName("owner") val owner : Owner,
     @SerializedName("is_answered") val is_answered : Boolean,
     @SerializedName("view_count") val view_count : Int,
+    @SerializedName( "accepted_answer_id") val accepted_answer_id: Int,
     @SerializedName("answer_count") val answer_count : Int,
     @SerializedName("score") val score : Int,
     @SerializedName("last_activity_date") val last_activity_date : Int,
