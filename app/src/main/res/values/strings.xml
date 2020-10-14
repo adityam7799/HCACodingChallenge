@@ -2,4 +2,10 @@
     <string name="app_name">HCACodingChallenge</string>
 
     <string name="error_generic">Some Error Occurred, Please try later</string>
+
+    <string name="title_no_internet">No Internet Connection</string>
+    <string name="message_no_internet">Please check your internet connection and try again</string>
+    <string name="button_retry">Retry</string>
+
+    <string name="exception_network">Error Occurred!</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.aditya.hcacodingchallenge.network
 
-import dagger.Binds
+import com.aditya.hcacodingchallenge.util.AppConstants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -12,8 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 class RetrofitBuilder {
 
-    private val BASE_URL = "https://api.stackexchange.com/2.2/"
-
+    // Creates a retrofit object and makes an API call
     @Provides
     fun getRetrofit(): ApiService {
         return Retrofit.Builder()

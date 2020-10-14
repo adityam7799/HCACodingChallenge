@@ -8,7 +8,8 @@ import retrofit2.http.Query
  * interface to maintain all the Network APIs
  */
 interface ApiService {
-    // GET network API call to get data from the API
+
+    // GET network API call to get questions data from the API
     @GET("questions")
     suspend fun getQuestions(
         @Query("page") page: Int,

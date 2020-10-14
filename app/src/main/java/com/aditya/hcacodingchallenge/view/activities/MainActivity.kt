@@ -3,6 +3,7 @@ package com.aditya.hcacodingchallenge.view.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -10,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.aditya.hcacodingchallenge.R
 import com.aditya.hcacodingchallenge.data.QuestionInfo
 import com.aditya.hcacodingchallenge.databinding.ActivityMainBinding
+import com.aditya.hcacodingchallenge.util.AppConstants.Companion.WEB_VIEW_ACTIVITY
 import com.aditya.hcacodingchallenge.util.MainApplication
 import com.aditya.hcacodingchallenge.util.Status
+import com.aditya.hcacodingchallenge.util.Utils.Companion.isInternetConnected
 import com.aditya.hcacodingchallenge.view.adapters.QuestionsListAdapter
 import com.aditya.hcacodingchallenge.view.viewmodels.MainViewModel
 import com.aditya.hcacodingchallenge.view.viewmodels.QuestionViewModel
@@ -39,15 +42,13 @@ class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickLi
         setUpDataBinding()
 
         // Gets question list from API call
-        questionsListObserver()
-
-        binding.viewModel = viewModel
+        getQuestionsData()
     }
 
     /**
      * Method to initialize and load databinding
      */
-    private fun setUpDataBinding(){
+    private fun setUpDataBinding() {
         // Setup databinding for the layout
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.recylerQuestion.layoutManager = LinearLayoutManager(
@@ -60,6 +61,30 @@ class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickLi
                 LinearLayoutManager.HORIZONTAL
             )
         )
+        binding.viewModel = viewModel
+    }
+
+    /**
+     * Check for internet connection and listen to API response
+     */
+    private fun getQuestionsData() {
+        if (isInternetConnected(this)) {
+            questionsListObserver()
+        } else {
+            showNetworkAlert()
+        }
+    }
+
+    /**
+     * Show Network Alert Dialog
+     */
+    private fun showNetworkAlert() {
+        AlertDialog.Builder(this).setTitle(R.string.title_no_internet)
+            .setMessage(R.string.message_no_internet)
+            .setPositiveButton(R.string.button_retry) { _, _ ->
+                getQuestionsData()
+            }
+            .show()
     }
 
     /**
@@ -73,12 +98,14 @@ class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickLi
                     recylerQuestion.visibility = View.VISIBLE
                     it.data?.let { questionsList ->
                         newFilteredList.addAll(viewModel.getFilteredList(questionsList))
+
+                        // Making multiple api calls using pagination to get the list count of 50
                         if (newFilteredList.size < 50) {
                             pageNumber++
                             questionsListObserver()
                         } else {
                             progressBar.visibility = View.GONE
-                            viewModel.onRetrieveQuestionsListSuccess(
+                            viewModel.notifyQuestionsToAdapter(
                                 newFilteredList,
                                 this
                             )
@@ -106,8 +133,12 @@ class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickLi
      * Listener which triggers when clicked on a question
      */
     override fun onQuestionClick(questionInfo: QuestionViewModel) {
-        val intent = Intent(applicationContext, WebViewActivity::class.java)
-        intent.putExtra("WEB_URL", questionInfo.getQuestionURL().value)
-        startActivity(intent)
+        if (isInternetConnected(this)) {
+            val intent = Intent(applicationContext, WebViewActivity::class.java)
+            intent.putExtra(WEB_VIEW_ACTIVITY, questionInfo.getQuestionURL().value)
+            startActivity(intent)
+        } else {
+            showNetworkAlert()
+        }
     }
 }

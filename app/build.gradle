@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.aditya.hcacodingchallenge"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -37,7 +37,7 @@ android {
     }
 }
 ext {
-    daggerVersion = '2.14.1'
+    daggerVersion = '2.27'
 }
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])

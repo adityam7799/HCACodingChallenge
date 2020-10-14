@@ -1,7 +1,8 @@
 package com.aditya.hcacodingchallenge.data
 
-import com.google.gson.annotations.SerializedName
-
+/**
+ * Data class to hold the response returned from Stackoverflow API
+ */
 data class QuestionsResponse(
     val items: ArrayList<QuestionInfo>,
     val has_more: Boolean,
@@ -9,6 +10,9 @@ data class QuestionsResponse(
     val quota_remaining: Int
 )
 
+/**
+ * Data class to hold information about a question
+ */
 data class QuestionInfo(
     val tags : List<String>,
     val owner : Owner,
@@ -26,6 +30,9 @@ data class QuestionInfo(
     val title : String
 )
 
+/**
+ * Data class to hold information about the owner of the question
+ */
 data class Owner (
     val reputation : Int,
     val user_id : Int,

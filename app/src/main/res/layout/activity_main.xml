@@ -5,7 +5,6 @@
     tools:context=".view.activities.MainActivity">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.aditya.hcacodingchallenge.view.viewmodels.MainViewModel" />
