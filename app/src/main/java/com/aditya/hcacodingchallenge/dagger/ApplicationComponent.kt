@@ -4,6 +4,9 @@ import com.aditya.hcacodingchallenge.network.RetrofitBuilder
 import com.aditya.hcacodingchallenge.view.activities.MainActivity
 import dagger.Component
 
+/**
+ * Dagger Application Component to inject the places of dependencies
+ */
 @Component(modules = [RetrofitBuilder::class])
 interface ApplicationComponent {
     // This tells Dagger that MainActivity requests injection so the graph needs to

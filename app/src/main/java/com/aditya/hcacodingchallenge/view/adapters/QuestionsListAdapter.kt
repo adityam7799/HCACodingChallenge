@@ -1,16 +1,11 @@
 package com.aditya.hcacodingchallenge.view.adapters
 
-import android.graphics.Bitmap
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aditya.hcacodingchallenge.R
 import com.aditya.hcacodingchallenge.data.QuestionInfo
-import com.aditya.hcacodingchallenge.data.QuestionsResponse
 import com.aditya.hcacodingchallenge.databinding.ItemQuestionsBinding
 import com.aditya.hcacodingchallenge.view.viewmodels.QuestionViewModel
 

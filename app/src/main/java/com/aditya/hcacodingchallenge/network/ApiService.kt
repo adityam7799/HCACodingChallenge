@@ -1,10 +1,8 @@
 package com.aditya.hcacodingchallenge.network
 
 import com.aditya.hcacodingchallenge.data.QuestionsResponse
-import dagger.Binds
 import retrofit2.http.GET
 import retrofit2.http.Query
-import javax.inject.Inject
 
 /**
  * interface to maintain all the Network APIs

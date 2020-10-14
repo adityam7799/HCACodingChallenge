@@ -3,7 +3,6 @@ package com.aditya.hcacodingchallenge.view.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.aditya.hcacodingchallenge.network.ApiHelper
-import javax.inject.Inject
 
 /**
  * Class ViewModelFactory to create ViewModel instances

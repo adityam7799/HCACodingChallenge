@@ -1,34 +1,34 @@
 package com.aditya.hcacodingchallenge.view.activities
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.MediaController
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aditya.hcacodingchallenge.R
+import com.aditya.hcacodingchallenge.data.QuestionInfo
 import com.aditya.hcacodingchallenge.databinding.ActivityMainBinding
-import com.aditya.hcacodingchallenge.network.ApiHelper
-import com.aditya.hcacodingchallenge.network.RetrofitBuilder
 import com.aditya.hcacodingchallenge.util.MainApplication
 import com.aditya.hcacodingchallenge.util.Status
 import com.aditya.hcacodingchallenge.view.adapters.QuestionsListAdapter
 import com.aditya.hcacodingchallenge.view.viewmodels.MainViewModel
 import com.aditya.hcacodingchallenge.view.viewmodels.QuestionViewModel
-import com.aditya.hcacodingchallenge.view.viewmodels.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
+/**
+ * MainActivity to load the recyclerview with the requested stackoverflow content
+ */
 class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickListener {
     private lateinit var binding: ActivityMainBinding
 
     @Inject
     lateinit var viewModel: MainViewModel
+    private var pageNumber = 1
+    private val newFilteredList: ArrayList<QuestionInfo> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -36,8 +36,18 @@ class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //setupViewModel()
+        setUpDataBinding()
 
+        // Gets question list from API call
+        questionsListObserver()
+
+        binding.viewModel = viewModel
+    }
+
+    /**
+     * Method to initialize and load databinding
+     */
+    private fun setUpDataBinding(){
         // Setup databinding for the layout
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.recylerQuestion.layoutManager = LinearLayoutManager(
@@ -50,33 +60,29 @@ class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickLi
                 LinearLayoutManager.HORIZONTAL
             )
         )
-        // Gets question list from API call
-        questionsListObserver()
-
-        binding.viewModel = viewModel
     }
 
-    // Method to setup ViewModel for this activity
-    private fun setupViewModel() {
-        viewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(ApiHelper(RetrofitBuilder().getRetrofit()))
-        ).get(MainViewModel::class.java)
-    }
-
-    // Method to initialize API call from ViewModel and listen to the data retrieved
+    /**
+     * Method to initialize API call from ViewModel and listen to the data retrieved
+     */
     private fun questionsListObserver() {
 
-        viewModel.getQuestionsList().observe(this, {
+        viewModel.getQuestionsList(pageNumber).observe(this, {
             when (it.status) {
                 Status.SUCCESS -> {
                     recylerQuestion.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
                     it.data?.let { questionsList ->
-                        viewModel.onRetrieveQuestionsListSuccess(
-                            questionsList,
-                            this
-                        )
+                        newFilteredList.addAll(viewModel.getFilteredList(questionsList))
+                        if (newFilteredList.size < 50) {
+                            pageNumber++
+                            questionsListObserver()
+                        } else {
+                            progressBar.visibility = View.GONE
+                            viewModel.onRetrieveQuestionsListSuccess(
+                                newFilteredList,
+                                this
+                            )
+                        }
                     }
                 }
                 Status.ERROR -> {
@@ -96,8 +102,12 @@ class MainActivity : AppCompatActivity(), QuestionsListAdapter.OnQuestionClickLi
         })
     }
 
-
+    /**
+     * Listener which triggers when clicked on a question
+     */
     override fun onQuestionClick(questionInfo: QuestionViewModel) {
-        Toast.makeText(this, "Question Clicked", Toast.LENGTH_LONG).show()
+        val intent = Intent(applicationContext, WebViewActivity::class.java)
+        intent.putExtra("WEB_URL", questionInfo.getQuestionURL().value)
+        startActivity(intent)
     }
 }
