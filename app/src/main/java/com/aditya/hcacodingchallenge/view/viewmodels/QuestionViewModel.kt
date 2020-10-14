@@ -13,6 +13,7 @@ class QuestionViewModel : ViewModel() {
     private var createdBy = MutableLiveData<String>()
     private var questionURL = MutableLiveData<String>()
     private var questionCreationDate = MutableLiveData<Long>()
+    var answersCount = MutableLiveData<Int>()
     var questionViews = MutableLiveData<Int>()
 
     // Method to bind the data to recyclerview element
@@ -22,6 +23,7 @@ class QuestionViewModel : ViewModel() {
         questionURL.value = question.link
         questionCreationDate.value = question.creation_date
         questionViews.value = question.view_count
+        answersCount.value = question.answer_count
     }
 
     // Method to return the question title
